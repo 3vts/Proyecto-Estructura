@@ -17,9 +17,30 @@ struct Seguro {
 	}
 	
 	friend ostream& operator<<(ostream& os, const Seguro& seguro) {
-    	return os << seguro.cedula << "\t" << seguro.tipoAuto << "\t" << seguro.montoAnual;
+    	return os << seguro.cedula << "\t" << seguro.tipoAuto << "\t" << seguro.montoAnual << "\n";
 	}
 	
 };
 
 Seguro *seguroPrimero = NULL;
+
+void agregarSeguro(string cedula, string tipoAuto, int montoAnual) {
+	Seguro *seguroNuevo;
+    Seguro *seguroUltimo = seguroPrimero;
+
+    seguroNuevo = (Seguro*)malloc(sizeof(Seguro));
+	strcpy(seguroNuevo->cedula, cedula.c_str());
+	strcpy(seguroNuevo->tipoAuto, tipoAuto.c_str());
+	seguroNuevo->montoAnual = montoAnual;
+	seguroNuevo->siguienteSeguro  = NULL;
+	
+	if (seguroPrimero == NULL) {
+        seguroPrimero = seguroNuevo;
+    }
+    else {
+        while (seguroUltimo->siguienteSeguro != NULL) {
+            seguroUltimo = seguroUltimo->siguienteSeguro;
+        }
+        seguroUltimo->siguienteSeguro = seguroNuevo;
+    }
+}

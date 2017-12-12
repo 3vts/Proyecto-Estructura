@@ -8,10 +8,8 @@
 
 using namespace std;
 
-sqlite3 *db;
-char *error;
-
 void insertarCliente(Cliente cliente) {
+	sqlite3 *db;
 	try {
 		sqlite3_open(DB, &db);
 		sqlite3_stmt *compiledStatement;
@@ -36,6 +34,7 @@ void insertarCliente(Cliente cliente) {
 }
 
 void modificarCliente(Cliente cliente){
+	sqlite3 *db;
 	try {
 		sqlite3_open(DB, &db);
 		sqlite3_stmt *compiledStatement;
@@ -60,6 +59,7 @@ void modificarCliente(Cliente cliente){
 }
 
 int eliminarCliente(string cedula){
+	sqlite3 *db;
 	try {
 		sqlite3_open(DB, &db);
 		sqlite3_stmt *compiledStatement;
@@ -79,11 +79,13 @@ int eliminarCliente(string cedula){
 	}
 }
 
-void crearTabla(){
+void crearTablaCliente(){
+	sqlite3 *db;
+	char *error;
 	try {
 		sqlite3_open(DB, &db);
 		
-		const char *sqlCreateTable = "CREATE TABLE IF NOT EXISTS Clientes (cedula STRING PRIMARY KEY, nombre STRING,  edad INTEGER, tiempo_licencia INTEGER);";
+		const char *sqlCreateTable = "CREATE TABLE IF NOT EXISTS Clientes (cedula STRING PRIMARY KEY, nombre STRING,  edad INTEGER, tiempo_licencia INTEGER)";
 		
 		int result = sqlite3_exec(db, sqlCreateTable, NULL, NULL, &error);
 		if(result) throw invalid_argument(error);
@@ -96,7 +98,9 @@ void crearTabla(){
 	}
 }
 
-void eliminarTabla(){
+void eliminarTablaCliente(){
+	sqlite3 *db;
+	char *error;
 	try {
 		sqlite3_open(DB, &db);
 		
@@ -114,15 +118,15 @@ void eliminarTabla(){
 }
 
 Cliente obtenerClientePorCedula(string cedula) {
+	sqlite3 *db;
+	sqlite3_stmt *compiledStatement;
 	try {
 		sqlite3_open(DB, &db);
-		sqlite3_stmt *compiledStatement;
 		
 		const char *sqlSelect = "SELECT * FROM Clientes WHERE cedula = ?";
 		
-		
 		int result =  sqlite3_prepare(db, sqlSelect, -1, &compiledStatement, 0);
-		if(result) throw invalid_argument(error);
+		if(result) throw invalid_argument(sqlite3_errmsg(db));
 		
 		sqlite3_bind_text(compiledStatement, 1, cedula.c_str(), strlen(cedula.c_str()), 0);
 		int res = sqlite3_step(compiledStatement);
@@ -133,28 +137,29 @@ Cliente obtenerClientePorCedula(string cedula) {
             int edad = sqlite3_column_int(compiledStatement, 2);
             int tiempoLicencia = sqlite3_column_int(compiledStatement, 3);
             Cliente cliente = Cliente(cedula, nombre, edad, tiempoLicencia);
+            sqlite3_finalize(compiledStatement);
             return cliente;
         } else {
         	throw invalid_argument("Cliente no existe");
 		}
         
-		sqlite3_close(db);
-		
 	} catch (const exception& ex) {
+		sqlite3_finalize(compiledStatement);
 		sqlite3_close(db);
 		throw invalid_argument(ex.what());
 	}
 }
 
 void obtenerTodosLosClientes() {
+	sqlite3 *db;
+	sqlite3_stmt *compiledStatement;
 	try	{
 		sqlite3_open(DB, &db);
-		sqlite3_stmt *compiledStatement;
 		
 		const char *sqlSelect = "SELECT * FROM Clientes";
 		
 		int result =  sqlite3_prepare(db, sqlSelect, -1, &compiledStatement, 0);
-		if(result) throw invalid_argument(error);
+		if(result) throw invalid_argument(sqlite3_errmsg(db));
 	
 		int res = sqlite3_step(compiledStatement);
 		
@@ -163,15 +168,15 @@ void obtenerTodosLosClientes() {
             string nombre = (char*)sqlite3_column_text(compiledStatement, 1);
             int edad = sqlite3_column_int(compiledStatement, 2);
             int tiempoLicencia = sqlite3_column_int(compiledStatement, 3);
-            Cliente cliente = Cliente(cedula, nombre, edad, tiempoLicencia);
-            cout << cliente;
+            agregarCliente(cedula, nombre, edad, tiempoLicencia);
             res = sqlite3_step(compiledStatement);
         }
+        sqlite3_finalize(compiledStatement);
 		sqlite3_close(db);
-		
 	}
 	catch (const exception& ex) {
-		sqlite3_free(error);
+		sqlite3_finalize(compiledStatement);
+		sqlite3_close(db);
 		throw invalid_argument(ex.what());
 	}
 }

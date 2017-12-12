@@ -19,9 +19,32 @@ struct Cliente {
 	}
 	
 	friend ostream& operator<<(ostream& os, const Cliente& cliente) {
-    	return os << cliente.cedula << "\t" << cliente.nombre << "\t" << cliente.edad << "\t" << cliente.tiempoLicencia;
+    	return os << cliente.cedula << "\t" << cliente.nombre << "\t" << cliente.edad << "\t" << cliente.tiempoLicencia << "\n";
 	}
 	
 };
 
 Cliente *clientePrimero = NULL;
+
+void agregarCliente(string cedula, string nombre, int edad, int tiempoLicencia) {
+	
+	Cliente *clienteNuevo;
+    Cliente *clienteUltimo = clientePrimero;
+
+    clienteNuevo = (Cliente*)malloc(sizeof(Cliente));
+	strcpy(clienteNuevo->cedula, cedula.c_str());
+	strcpy(clienteNuevo->nombre, nombre.c_str());
+	clienteNuevo->edad = edad;
+	clienteNuevo->tiempoLicencia = tiempoLicencia;
+	clienteNuevo->siguienteCliente  = NULL;
+	
+	if (clientePrimero == NULL) {
+        clientePrimero = clienteNuevo;
+    }
+    else {
+        while (clienteUltimo->siguienteCliente != NULL) {
+            clienteUltimo = clienteUltimo->siguienteCliente;
+        }
+        clienteUltimo->siguienteCliente = clienteNuevo;
+    }
+}
