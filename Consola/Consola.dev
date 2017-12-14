@@ -1,7 +1,7 @@
 [Project]
 FileName=Consola.dev
 Name=Consola
-UnitCount=5
+UnitCount=6
 Type=1
 Ver=2
 ObjFiles=
@@ -94,6 +94,16 @@ BuildCmd=
 FileName=Entidades\SeguroEN.h
 CompileCpp=1
 Folder=Entidades
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit6]
+FileName=Logica\Logica.h
+CompileCpp=1
+Folder=Logica
 Compile=1
 Link=1
 Priority=1000

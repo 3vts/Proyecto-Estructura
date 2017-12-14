@@ -1,11 +1,12 @@
 #include <string.h>
+#include <iomanip>
 
 using namespace std;
 
 struct Cliente {
 	
 	char cedula[14];
-	char nombre[50];
+	char nombre[25];
 	int edad;
 	int tiempoLicencia;
 	Cliente *siguienteCliente;
@@ -19,7 +20,7 @@ struct Cliente {
 	}
 	
 	friend ostream& operator<<(ostream& os, const Cliente& cliente) {
-    	return os << cliente.cedula << "\t" << cliente.nombre << "\t" << cliente.edad << "\t" << cliente.tiempoLicencia << "\n";
+    	return os << setw(14) << left << cliente.cedula << "\t" << setw(25) << left << cliente.nombre << "\t" << setw(14) << left << cliente.edad << "\t" << cliente.tiempoLicencia << "\n";
 	}
 	
 };

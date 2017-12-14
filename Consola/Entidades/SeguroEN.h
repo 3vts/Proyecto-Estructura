@@ -1,11 +1,12 @@
 #include <string.h>
+#include <iomanip>
 
 using namespace std;
 
 struct Seguro {
 	
 	char cedula[14];
-	char tipoAuto[50];
+	char tipoAuto[20];
 	int montoAnual;
 	Seguro *siguienteSeguro;
 	
@@ -17,7 +18,7 @@ struct Seguro {
 	}
 	
 	friend ostream& operator<<(ostream& os, const Seguro& seguro) {
-    	return os << seguro.cedula << "\t" << seguro.tipoAuto << "\t" << seguro.montoAnual << "\n";
+    	return os << setw(14)  << left << seguro.cedula << "\t" << setw(20)  << left << seguro.tipoAuto << "\t"  << seguro.montoAnual << "\n";
 	}
 	
 };
@@ -43,4 +44,12 @@ void agregarSeguro(string cedula, string tipoAuto, int montoAnual) {
         }
         seguroUltimo->siguienteSeguro = seguroNuevo;
     }
+}
+
+void limpiaListaSeguro(Seguro *seguro) {
+	while(seguro) {
+		Seguro *seguroAnterior = seguro;
+		seguro = seguro->siguienteSeguro;
+		free(seguro);
+	}
 }
